@@ -9,14 +9,75 @@ Add the following to your `deps.edn` file:
 
 ```clojure
 {:deps {uk.axvr/dynamock
-         {:git/tag "v1.0" :git/sha "xxxxxx"
+         {:git/sha "7323420cadbd9a54a1f13d5c79967d2e8b8804cf"
           :git/url "https://github.com/axvr/dynamock.git"}}}
 ```
 
 
 ## Usage
 
-_WIP_
+**Note**: Dynamock is still a work-in-progress.  Until it reaches v1.0, expect
+backwards incompatible changes.
+
+Examples using the provided HTTP mocking utilities:
+
+```clojure
+(require '[uk.axvr.dynamock :refer :all]
+         '[org.httpkit.client :as http]
+         '[clojure.string :as str])
+
+(def ^:dynamic *http-fn* http/request)
+
+;; HTTP requests work as expected.
+@(*http-fn* {:url "https://example.com"})      ; => {:status 200, ...}
+@(*http-fn* {:url "https://example.com/foo"})  ; => {:status 404, ...}
+
+(with-http-mock *http-fn*
+  ;; Register a stub.
+  (with-stub [{:url "https://exmaple.com/foo"}
+              {:status 200, :body "Hello world!"}]
+    ;; Real network request.
+    @(*http-fn* {:url "https://example.com"})        ; => {:status 200, ...}
+    ;; Uses the stub we defined.
+    @(*http-fn* {:url "https://example.com/foo"})))  ; => {:status 200, :body "Hello world!"}
+
+(with-http-mock *http-fn*
+  ;; Disallow real network requests.
+  (stub! [(constantly true)
+          (fn [req]
+            (throw (ex-info "Real HTTP requests are not allowed!" req)))])
+  ;; Register a stub, that will only be used by requests in this with-stub block.
+  (with-stub [{:url "https://example.com/works"
+               :method :get}
+              {:status 200, :body "Works!"}]
+    @(*http-fn* {:url "https://example.com"})         ; => throws exception!
+    @(*http-fn* {:url "https://example.com/works"}))  ; => {:status 200, :body "Works!"}
+  ;; Outside of the previous stub-scope, so request fails.
+  @(*http-fn* {:url "https://example.com/works"}))    ; => throws exception!
+
+(defn some-fn-that-uses-*http-fn* [method url]
+  (:body @(*http-fn* {:method method, :url url})))
+
+(with-http-mock *http-fn*
+  ;; Disallow real network requests, except those to "http://localhost:8080".
+  (stub! [(fn [req]
+            #(not (str/starts-with? (:url req) "http://localhost:8080")))
+          (fn [req]
+            (throw (ex-info "External HTTP requests are not allowed!" req)))])
+  ;; You can register multiple stubs at once using with-stubs.
+  (with-stubs [[#(str/starts-with? (:url %) "https://clojure.org")
+                (fn [req]
+                  (if (= :get (:method req))
+                    {:status 200, :body "Clojure is great!"}
+                    {:status 401, :body "Unauthorized!"}))]
+               [#(= (:url %) "http://localhost:8080/foo")
+                {:status 500, :body "Server error!"}]]
+    (some-fn-that-uses-*http-fn* :get "https://clojure.org/great")   ; => "Clojure is great!"
+    (some-fn-that-uses-*http-fn* :post "https://clojure.org")        ; => "Unauthorized!"
+    (some-fn-that-uses-*http-fn* :get "http://localhost:8080/foo"))  ; => "Server error!"
+  (some-fn-that-uses-*http-fn* :get "http://localhost:8080/foo")  ; => contacts local server
+  (some-fn-that-uses-*http-fn* :get "https://clojure.org"))       ; => throws exception!
+```
 
 
 ## Legal
