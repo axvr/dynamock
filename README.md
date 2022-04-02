@@ -9,7 +9,7 @@ Add the following to your `deps.edn` file:
 
 ```clojure
 {:deps {uk.axvr/dynamock
-         {:git/tag "v1.0.0" :git/sha "xxxxxx"
+         {:git/tag "v1.0" :git/sha "xxxxxx"
           :git/url "https://github.com/axvr/dynamock.git"}}}
 ```
 
