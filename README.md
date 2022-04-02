@@ -23,10 +23,11 @@ Examples using the provided HTTP mocking utilities:
 
 ```clojure
 (require '[uk.axvr.dynamock :refer :all]
+         '[uk.axvr.dynamock.http :refer :all]
          '[org.httpkit.client :as http]
          '[clojure.string :as str])
 
-(def ^:dynamic *http-fn* http/request)
+(def ^:dynamic *http-fn* http/request)  ; Also works with clj-http.
 
 ;; HTTP requests work as expected.
 @(*http-fn* {:url "https://example.com"})      ; => {:status 200, ...}
@@ -43,6 +44,8 @@ Examples using the provided HTTP mocking utilities:
 
 (with-http-mock *http-fn*
   ;; Disallow real network requests.
+  ;;   As this is fairly common, there is already a stub provided for this:
+  ;;     (stub! uk.axvr.dynamock.http/block-real-http-requests)
   (stub! [(constantly true)
           (fn [req]
             (throw (ex-info "Real HTTP requests are not allowed!" req)))])
@@ -64,7 +67,7 @@ Examples using the provided HTTP mocking utilities:
             #(not (str/starts-with? (:url req) "http://localhost:8080")))
           (fn [req]
             (throw (ex-info "External HTTP requests are not allowed!" req)))])
-  ;; You can register multiple stubs at once using with-stubs.
+  ;; You can register multiple stubs at once.
   (with-stubs [[#(str/starts-with? (:url %) "https://clojure.org")
                 (fn [req]
                   (if (= :get (:method req))

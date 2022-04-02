@@ -125,25 +125,3 @@
         (is (= "leave" (*test-fn-arity-rst* :bye))))
       (is (= [:bye] (*test-fn-arity-rst* :bye)))
       (is (= "hello" (*test-fn-arity-rst* :hi))))))
-
-
-(deftest http-mock-*test-fn-arity-1*
-  (testing "Rebind, with stub"
-    (with-http-mock *test-fn-arity-1*
-      (let [resp {:status 200 :body "Hello!"}]
-        (with-stub [{:url "https://example.com"} resp]
-          (is (= resp @(*test-fn-arity-1*
-                         {:url "https://example.com"
-                          :method :get})))))))
-  (testing "Rebind, with stub fn pred"
-    (with-http-mock *test-fn-arity-1*
-      (with-stubs [[(constantly true) {:status 404}]
-                   [(fn [req] (= (:method req) :put)) {:status 401}]]
-        (is (= {:status 404} @(*test-fn-arity-1* {:url "http://localhost:80"})))
-        (is (= {:status 401} @(*test-fn-arity-1* {:method :put}))))))
-  (testing "Rebind, with stub map pred"
-    (with-http-mock *test-fn-arity-1*
-      (with-stubs [[(constantly true) {:status 404}]
-                   [{:method :put} {:status 401}]]
-        (is (= {:status 404} @(*test-fn-arity-1* {:url "http://localhost:80"})))
-        (is (= {:status 401} @(*test-fn-arity-1* {:method :put})))))))
