@@ -10,7 +10,7 @@ Add the following to your `deps.edn` file:
 
 ```clojure
 {:deps {uk.axvr/dynamock
-         {:git/sha "dee3f0833c71208abaf43142e8e30d71e6fe0bfc"
+         {:git/sha "5893150b04281f94484449eabf8e8453bd3ac646"
           :git/url "https://github.com/axvr/dynamock.git"}}}
 ```
 

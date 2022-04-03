@@ -4,10 +4,8 @@
     - Can rebind *stubs* in the macro when setting the mock fn, so it only
       contains stubs for that function?
 - Documentation.
-  - What are dynamically-scoped functions?
-    - ^:dynamic  <-- even works directly on a function!
   - Why use this library?
     - Replace http-kit-fake and robert.hooke.
       - Simpler, less code, more idiomatic and works on any dynamic-function or
         HTTP lib.
-- Release v0.1
+- Release v1.0
