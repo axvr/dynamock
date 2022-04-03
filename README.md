@@ -1,6 +1,7 @@
 # Dynamock
 
-A Clojure library for mocking dynamically-scoped functions.
+A Clojure library for mocking functions, with included utilities for
+mocking HTTP requests.
 
 
 ## Installation
@@ -54,7 +55,9 @@ Examples using the provided HTTP mocking utilities:
                :method :get}
               {:status 200, :body "Works!"}]
     @(*http-fn* {:url "https://example.com"})         ; => throws exception!
-    @(*http-fn* {:url "https://example.com/works"}))  ; => {:status 200, :body "Works!"}
+    @(*http-fn* {:url "https://example.com/works"})   ; => {:status 200, :body "Works!"}
+    @(*http-fn* {:url "https://example.com/works"     ; => throws exception!
+                 :method :post}))
   ;; Outside of the previous stub-scope, so request fails.
   @(*http-fn* {:url "https://example.com/works"}))    ; => throws exception!
 

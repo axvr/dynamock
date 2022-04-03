@@ -1,6 +1,6 @@
 (ns uk.axvr.dynamock.http
   "HTTP mocking utilities for uk.axvr.dynamock."
-  (:require [uk.axvr.dynamock :as dyn]))
+  (:require [uk.axvr.dynamock :as mock]))
 
 ;;; https://github.com/clojure/spec-alpha2/blob/74ada9d5111aa17c27fdef9c626ac6b4b1551a3e/src/test/clojure/clojure/test_clojure/spec.clj#L18,L25
 (defn- submap?
@@ -31,7 +31,7 @@
   "Simple HTTP mocking function generator."
   [real-fn]
   (fn [& params]
-    (if-let [resp (some (partial stub-pred-matches? params) @dyn/*stubs*)]
+    (if-let [resp (some (partial stub-pred-matches? params) @mock/*stubs*)]
       (delay resp)
       (apply real-fn params))))
 
@@ -42,6 +42,6 @@
 
 (defmacro with-http-mock
   "Register the below scope with a mocked HTTP fn."
-  [*dynfn* & body]
-  `(dyn/with-mock ~*dynfn* http-mock
+  [fn & body]
+  `(mock/with-mock ~fn http-mock
      ~@body))
