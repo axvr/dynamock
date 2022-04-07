@@ -25,9 +25,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Clojure
-        uses: DeLaGuardo/setup-clojure@4.0
+        uses: DeLaGuardo/setup-clojure@5.0
         with:
-          cli: '1.11.0.1100'
+          cli: '1.11.1.1107'
 
       - name: Run tests
         run: clojure -X:test
