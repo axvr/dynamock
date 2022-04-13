@@ -1,6 +1,8 @@
 - Documentation.
   - Why use this library?
     - Replace http-kit-fake and robert.hooke.
-      - Simpler, less code, more idiomatic and works on any dynamic-function or
-        HTTP lib.
+      - Simpler, less code, more idiomatic and works on any function or HTTP lib.
 - Release v1.0
+- Spying functionality.
+  - uk.axvr.dynamock.spy namespace
+  - spy mock and utilities.
