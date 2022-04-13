@@ -1,12 +1,12 @@
 (ns uk.axvr.dynamock
   "Helper utilities for mocking functions.")
 
-(def ^:dynamic *stubs* (atom (list)))
+(def ^:dynamic *stubs* (atom {}))
 
-(defn stub!
+(defmacro stub!
   "Register a stub in the current stub scope."
-  [stub]
-  (swap! *stubs* conj stub))
+  [fn stub]
+  `(swap! *stubs* update #'~fn conj ~stub))
 
 (defmacro with-stub-scope
   "Scope the registered stubs to the lexical scope."
@@ -18,21 +18,22 @@
   "Register the below scope with a mocked fn."
   [fn mock & body]
   `(with-stub-scope
-     (if (:dynamic (meta (var ~fn)))
-       (binding [~fn (~mock ~fn)]
-         ~@body)
-       (with-redefs [~fn (~mock ~fn)]
-         ~@body))))
+     (let [get-stubs# #(get @*stubs* #'~fn)]
+       (if (:dynamic (meta #'~fn))
+         (binding [~fn (~mock ~fn get-stubs#)]
+           ~@body)
+         (with-redefs [~fn (~mock ~fn get-stubs#)]
+           ~@body)))))
 
 (defmacro with-stubs
   "Like with-stub but registers multiple stubs at once."
-  [stubs & body]
+  [fn stubs & body]
   `(with-stub-scope
-     ~@(map (fn [s] `(stub! ~s)) stubs)
+     ~@(map (clojure.core/fn [s] `(stub! ~fn ~s)) stubs)
      ~@body))
 
 (defmacro with-stub
   "Register a stub for tests in the body."
-  [stub & body]
-  `(with-stubs [~stub]
+  [fn stub & body]
+  `(with-stubs ~fn [~stub]
      ~@body))

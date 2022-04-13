@@ -1,8 +1,3 @@
-- Mock multiple dynamic functions at once?
-  - Need separate stub registries?
-  - Non-awkward stub! function alternative to choose mock fn to stub.
-    - Can rebind *stubs* in the macro when setting the mock fn, so it only
-      contains stubs for that function?
 - Documentation.
   - Why use this library?
     - Replace http-kit-fake and robert.hooke.

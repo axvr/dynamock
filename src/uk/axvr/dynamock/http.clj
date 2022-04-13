@@ -29,9 +29,9 @@
 ;;; TODO: make a generic/non-http version of this for the core ns.
 (defn http-mock
   "Simple HTTP mocking function generator."
-  [real-fn]
+  [real-fn get-stubs]
   (fn [& params]
-    (if-let [resp (some (partial stub-pred-matches? params) @mock/*stubs*)]
+    (if-let [resp (some (partial stub-pred-matches? params) (get-stubs))]
       (delay resp)
       (apply real-fn params))))
 
