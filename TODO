@@ -1,7 +1,7 @@
-- Documentation.
-  - Why use this library?
-    - Replace http-kit-fake and robert.hooke.
-      - Simpler, less code, more idiomatic and works on any function or HTTP lib.
+- Find elegant solution to the deref problem.
+  - HttpKit returns derefable responses.
+  - Clj-http does not.
+- Better docstrings and improve documentation in README
 - Release v1.0
 - Spying functionality.
   - uk.axvr.dynamock.spy namespace
