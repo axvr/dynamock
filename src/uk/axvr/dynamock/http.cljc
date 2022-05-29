@@ -4,18 +4,18 @@
 
 ;;; https://github.com/clojure/spec-alpha2/blob/74ada9d5111aa17c27fdef9c626ac6b4b1551a3e/src/test/clojure/clojure/test_clojure/spec.clj#L18,L25
 (defn- submap?
-  "Is m1 a subset of m2?"
-  [m1 m2]
-  (if (and (map? m1) (map? m2))
+  "Returns true if map1 is a subset of map2."
+  [map1 map2]
+  (if (and (map? map1) (map? map2))
     (every? (fn [[k v]]
-              (and (contains? m2 k)
-                   (submap? v (get m2 k))))
-            m1)
-    (= m1 m2)))
+              (and (contains? map2 k)
+                   (submap? v (get map2 k))))
+            map1)
+    (= map1 map2)))
 
-(defn- stub-pred-matches?
-  "Simple function to check if a stub-predicate (pred) \"matches\" the
-  parameters (params) passed to the mocked function and returns the stub."
+(defn- http-stub-pred-matches?
+  "Checks if an http-stub-predicate (pred) \"matches\" the parameters (params)
+  passed to the mocked function and returns the stub."
   [params [pred stub]]
   (when
     (cond
@@ -26,12 +26,11 @@
       (apply stub params)
       stub)))
 
-;;; TODO: make a generic/non-http version of this for the core ns.
 (defn http-mock
   "Simple HTTP mocking function generator."
   [real-fn get-stubs]
   (fn [& params]
-    (if-let [resp (some (partial stub-pred-matches? params) (get-stubs))]
+    (if-let [resp (some (partial http-stub-pred-matches? params) (get-stubs))]
       (delay resp)
       (apply real-fn params))))
 

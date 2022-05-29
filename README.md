@@ -74,6 +74,8 @@ this is probably how you would mostly use it.
 
 ### Adding stubs to your mocks
 
+The real power of Dynamock shows when combining your mocks with stubs.
+
 ```clojure
 (require '[uk.axvr.dynamock :refer [with-mock with-stub]])
 
@@ -196,17 +198,17 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
          '[clojure.string :as str])
 
 ;; HTTP requests work as expected.
-@(http/get {:url "https://example.com"})      ; => {:status 200, ...}
-@(http/get {:url "https://example.com/foo"})  ; => {:status 404, ...}
+@(http/get "https://example.com")      ; => {:status 200, ...}
+@(http/get "https://example.com/foo")  ; => {:status 404, ...}
 
 (with-http-mock http/request
   ;; Register a stub.
   (with-stub http/request [{:url "https://exmaple.com/foo"}
                            {:status 200, :body "Hello world!"}]
     ;; Real network request.
-    @(http/get {:url "https://example.com"})        ; => {:status 200, ...}
+    @(http/get "https://example.com")        ; => {:status 200, ...}
     ;; Uses the stub we defined.
-    @(http/get {:url "https://example.com/foo"})))  ; => {:status 200, :body "Hello world!"}
+    @(http/get "https://example.com/foo")))  ; => {:status 200, :body "Hello world!"}
 
 (with-http-mock http/request
   ;; Disallow real network requests.
@@ -216,15 +218,15 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
                        (fn [req]
                          (throw (ex-info "Real HTTP requests are not allowed!" req)))])
   ;; Register a stub, that will only be used by requests in this with-stub block.
-  (with-stub http/request [{:url "https://example.com/works"
+  (with-stub http/request [{:url    "https://example.com/works"
                             :method :get}
                            {:status 200, :body "Works!"}]
-    @(http/get {:url "https://example.com"})         ; => throws exception!
-    @(http/get {:url "https://example.com/works"})   ; => {:status 200, :body "Works!"}
-    @(http/post {:url "https://example.com/works"})  ; => throws exception!
+    @(http/get "https://example.com")         ; => throws exception!
+    @(http/get "https://example.com/works")   ; => {:status 200, :body "Works!"}
+    @(http/post "https://example.com/works")  ; => throws exception!
     @(http/request {:url "https://example.com/works, :method :post"})}))  ; => same as above: throws exception.
   ;; Outside of the previous stub-scope, so request fails.
-  @(http/get {:url "https://example.com/works"}))    ; => throws exception!
+  @(http/get "https://example.com/works"))    ; => throws exception!
 
 (defn do-something [method url]
   (:body @(http/request {:method method, :url url})))
