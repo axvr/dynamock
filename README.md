@@ -1,6 +1,6 @@
 # Dynamock
 
-A collection of simple utilities for mocking Clojure functions, with extra
+A collection of simple utilities for mocking [Clojure][] functions, with extra
 utilities for mocking HTTP requests and (eventually) more.
 
 Dynamock is based around the concepts of [mocks and stubs][].  Mocks have
@@ -9,6 +9,7 @@ appropriate responses.
 
 **Dynamock cannot mock macros or [inlined functions][].**
 
+[Clojure]: https://clojure.org
 [mocks and stubs]: https://martinfowler.com/articles/mocksArentStubs.html#TheDifferenceBetweenMocksAndStubs
 [inlined functions]: http://bytopia.org/2014/07/07/inline-functions-in-clojure/
 
