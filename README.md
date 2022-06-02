@@ -287,7 +287,7 @@ Dynamock is not distributed as a JAR.  This is an example `project.clj` file:
   :middleware   [lein-git-down.plugin/inject-properties]
   :repositories [["public-github" {:url "git://github.com"}]]
   :git-down     {uk.axvr/dynamock {:coordinates axvr/dynamock}}
-  :dependencies [[uk.axvr/dynamock "6e0e27fa36904facbf01929cd380fea6f48798a7"]])
+  :dependencies [[uk.axvr/dynamock "de0fa67c469448e5ca474b756856bed39452349f"]])
 ```
 
 
