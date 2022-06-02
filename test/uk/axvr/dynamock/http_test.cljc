@@ -22,7 +22,7 @@
              :body    "Posted something."})))
 
 
-(deftest dyn-http-fn-works
+(deftest *http-fn*-works
   (testing "*http-fn*"
     (is (= @(*http-fn* {:url "https://example.com", :method :get})
            {:status  200
@@ -34,7 +34,7 @@
             :body    "Posted something."}))))
 
 
-(deftest mock-http-fn
+(deftest mock-http-fn-dynamic
   (testing "Rebind, with stub"
     (with-http-mock *http-fn*
       (let [resp {:status 200 :body "Hello!"}]
@@ -56,8 +56,8 @@
         (is (= {:status 401} @(*http-fn* {:method :put})))))))
 
 
-(deftest test-block-real-http-requests
-  (testing "Blocking real HTTP requests."
+(deftest test-block-real-http-requests-dynamic
+  (testing "Blocked real HTTP requests."
     (with-http-mock *http-fn*
       (stub! *http-fn* block-real-http-requests)
       (stub! *http-fn* [{:url "https://example.com/allowed"}
@@ -71,8 +71,26 @@
       (is (= {:status 200} @(*http-fn* {:url "https://example.com/allowed"}))))))
 
 
+(deftest derefable?-false-dynamic
+  (testing "Response was not made derefable."
+    (with-http-mock *http-fn* {:derefable? false}
+      (let [resp {:status 200 :body "Hello!"}]
+        (with-stub *http-fn* [{:url "https://example.com"} resp]
+          (is (= resp (*http-fn*
+                        {:url "https://example.com"
+                         :method :get})))))))
+  (testing "Response was automatically derefed."
+    (with-http-mock *http-fn* {:derefable? false}
+      (let [resp {:status 200 :body "Hello!"}]
+        (with-stub *http-fn* [{:url "https://example.com"} (future resp)]
+          (is (= resp (*http-fn*
+                        {:url "https://example.com"
+                         :method :get}))))))))
+
+
+
 ;;; --------------------------------------------
-;;; Lexically-scoped function.
+;;; Regular function.
 
 
 (defn http-fn [req]
@@ -86,7 +104,7 @@
              :body    "Posted something."})))
 
 
-(deftest dyn-http-fn-works-lexical
+(deftest http-fn-works
   (testing "http-fn"
     (is (= @(http-fn {:url "https://example.com", :method :get})
            {:status  200
@@ -98,7 +116,7 @@
             :body    "Posted something."}))))
 
 
-(deftest mock-http-fn-lexical
+(deftest mock-http-fn
   (testing "Rebind, with stub"
     (with-http-mock http-fn
       (let [resp {:status 200 :body "Hello!"}]
@@ -120,8 +138,8 @@
         (is (= {:status 401} @(http-fn {:method :put})))))))
 
 
-(deftest test-block-real-http-requests-lexical
-  (testing "Blocking real HTTP requests."
+(deftest test-block-real-http-requests
+  (testing "Blocked real HTTP requests."
     (with-http-mock http-fn
       (stub! http-fn block-real-http-requests)
       (stub! http-fn [{:url "https://example.com/allowed"}
@@ -133,3 +151,19 @@
                 "uk.axvr.dynamock: real HTTP requests are not allowed."))
             @(http-fn {:url "https://example.com"})))
       (is (= {:status 200} @(http-fn {:url "https://example.com/allowed"}))))))
+
+(deftest derefable?-false
+  (testing "Response was not made derefable."
+    (with-http-mock *http-fn* {:derefable? false}
+      (let [resp {:status 200 :body "Hello!"}]
+        (with-stub *http-fn* [{:url "https://example.com"} resp]
+          (is (= resp (*http-fn*
+                        {:url "https://example.com"
+                         :method :get})))))))
+  (testing "Response was automatically derefed."
+    (with-http-mock *http-fn* {:derefable? false}
+      (let [resp {:status 200 :body "Hello!"}]
+        (with-stub *http-fn* [{:url "https://example.com"} (future resp)]
+          (is (= resp (*http-fn*
+                        {:url "https://example.com"
+                         :method :get}))))))))

@@ -19,7 +19,7 @@
     ys))
 
 
-(deftest dyn-fns-work
+(deftest fns-work-dynamic
   (testing "*test-fn-arity-0*"
     (is (= :a (*test-fn-arity-0*))))
   (testing "*test-fn-arity-1*"
@@ -132,7 +132,7 @@
 
 
 ;;; --------------------------------------------
-;;; Lexically-scoped function.
+;;; Regular function.
 
 
 (defn test-fn-arity-0 [] :a)
@@ -146,7 +146,7 @@
     ys))
 
 
-(deftest lexical-fns-work
+(deftest fns-work
   (testing "test-fn-arity-0"
     (is (= :a (test-fn-arity-0))))
   (testing "test-fn-arity-1"
@@ -161,7 +161,7 @@
     (is (= [nil] (test-fn-arity-rst nil nil)))))
 
 
-(deftest mock-test-fn-arity-0-lexical
+(deftest mock-test-fn-arity-0
   (testing "Rebound, no stubs"
     (with-mock test-fn-arity-0 (fn [_ _] (fn [] :b))
       (is (= :b (test-fn-arity-0)))))
@@ -170,7 +170,7 @@
       (is (= :a (test-fn-arity-0))))))
 
 
-(deftest mock-test-fn-arity-1-lexical
+(deftest mock-test-fn-arity-1
   (testing "Rebound, no stubs"
     (with-mock test-fn-arity-1 (fn [old _] #(if (= :c %) :d (old %)))
       (is (= :a (test-fn-arity-1 :a)))
@@ -209,7 +209,7 @@
       (is (= "hello" (test-fn-arity-1 :hi))))))
 
 
-(deftest mock-test-fn-arity-rst-lexical
+(deftest mock-test-fn-arity-rst
   (testing "Rebound, no stubs"
     (with-mock test-fn-arity-rst (fn [_ _]
                                    (fn [x & rst]

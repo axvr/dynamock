@@ -197,6 +197,10 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
          '[org.httpkit.client :as http]
          '[clojure.string :as str])
 
+;; These examples will also work with clj-http, but you will need to remove all
+;; the `@`s (deref calls) and add `{:derefable? false}` as the first parameter
+;; on each `with-http-mock` call.
+
 ;; HTTP requests work as expected.
 @(http/get "https://example.com")      ; => {:status 200, ...}
 @(http/get "https://example.com/foo")  ; => {:status 404, ...}
