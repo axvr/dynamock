@@ -172,7 +172,9 @@ tests easier to read.
     (my-fn 3)
     (my-fn 4)))
 
-;; `with-stub` = `with-stub-scope` + `stub!`
+;; Instead of `with-stub` you can use its building blocks independently.
+;;   - `with-stub-scope`, restricts stubs registered in its body to that body.
+;;   - `stub!`, register a stub in the current stub scope.
 (with-stub-scope
   (stub! my-fn [3 9])
   (my-fn 3)
@@ -198,7 +200,7 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
          '[clojure.string :as str])
 
 ;; These examples will also work with clj-http, but you will need to remove all
-;; the `@`s (deref calls) and add `{:derefable? false}` as the first parameter
+;; the `@`s (deref calls) and add `{:derefable? false}` as the second parameter
 ;; on each `with-http-mock` call.
 
 ;; HTTP requests work as expected.
