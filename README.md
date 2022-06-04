@@ -7,7 +7,8 @@ Dynamock is based around the concepts of [mocks and stubs][].  Mocks have
 access to a set of registered stubs which it can use to choose/build
 appropriate responses.
 
-**Dynamock cannot mock macros or [inlined functions][].**
+> **Note**
+> Dynamock cannot mock macros or [inlined functions][].
 
 [Clojure]: https://clojure.org
 [mocks and stubs]: https://martinfowler.com/articles/mocksArentStubs.html#TheDifferenceBetweenMocksAndStubs
@@ -261,8 +262,9 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
 
 ## Installation
 
-**Note**: Dynamock is still a work-in-progress.  Until it reaches v1.0, expect
-backwards incompatible changes.
+> **Warning**
+> Dynamock is still a work-in-progress.  Until it reaches v1.0, expect
+> backwards incompatible changes.
 
 
 ### tools.deps
