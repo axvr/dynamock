@@ -1,18 +1,7 @@
 (ns uk.axvr.dynamock.http
   "HTTP mocking utilities for uk.axvr.dynamock."
-  (:require [uk.axvr.dynamock :as mock])
-  (:import [clojure.lang IDeref IBlockingDeref]))
-
-;;; https://github.com/clojure/spec-alpha2/blob/74ada9d5111aa17c27fdef9c626ac6b4b1551a3e/src/test/clojure/clojure/test_clojure/spec.clj#L18,L25
-(defn- submap?
-  "Returns true if map1 is a subset of map2."
-  [map1 map2]
-  (if (and (map? map1) (map? map2))
-    (every? (fn [[k v]]
-              (and (contains? map2 k)
-                   (submap? v (get map2 k))))
-            map1)
-    (= map1 map2)))
+  (:require [uk.axvr.dynamock :as mock]
+            [uk.axvr.refrain  :as r]))
 
 (defn http-stub-pred-matches?
   "Checks if an http-stub-predicate (pred) \"matches\" the parameters (params)
@@ -21,27 +10,23 @@
   (when
     (cond
       (fn? pred)   (try (apply pred params) (catch Exception _))
-      (map? pred)  (submap? pred (first params))
+      (map? pred)  (r/submap? pred (first params))
       (coll? pred) (= pred params))
     (if (fn? stub)
       (apply stub params)
       stub)))
 
-(defn- derefable? [ref]
-  (or (instance? IDeref ref)
-      (instance? IBlockingDeref ref)))
-
 (defn- ->derefable [resp]
-  (if (derefable? resp) resp (delay resp)))
+  (if (r/derefable? resp) resp (delay resp)))
 
 (defn- <-derefable [resp]
-  (if (derefable? resp) @resp resp))
+  (if (r/derefable? resp) @resp resp))
 
 (defn http-mock
   "Simple HTTP mocking function generator.  If you want to add more
   functionality to this, why not mock this function?
 
-  Accepts an optional map of config options (opts).  If a `:defrefable?` key is
+  Accepts an optional map of config options (opts).  If a `:derefable?` key is
   given and the value is truthy, the HTTP response will be derefable.  Set this
   to `false` if you are using clj-http.  Default: `true`."
   ([real-fn get-stubs]
