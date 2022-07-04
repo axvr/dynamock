@@ -38,22 +38,13 @@
         resp
         (apply real-fn params))))))
 
-(defn- macro-body-opts
-  "For macros, extract a map of options from the body.  If there is more than
-  one parameter, the first item will be treated as an options map if it is
-  a map."
-  [[opts & body :as params]]
-  (if (and (seq body) (map? opts))
-    [opts body]
-    [{} params]))
-
 (defmacro with-http-mock
   "Register the below scope with a mocked HTTP fn.
 
   If the first value in the body is a hash-map (and there is more than one form
   in the body) it will be treated as options and passed to `http-mock`."
   [fn & body]
-  (let [[opts body] (macro-body-opts body)]
+  (let [[opts body] (r/macro-body-opts body)]
     `(mock/with-mock ~fn #(http-mock %1 %2 ~opts)
        ~@body)))
 
