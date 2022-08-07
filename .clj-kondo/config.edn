@@ -1,0 +1,2 @@
+{:linters {:refer-all {:exclude [uk.axvr.dynamock
+                                 uk.axvr.dynamock.http]}}}

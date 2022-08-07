@@ -1,12 +1,10 @@
 (ns uk.axvr.dynamock-test
   "Tests for uk.axvr.dynamock."
-  (:require [clojure.test :refer :all]
+  (:require [clojure.test :refer [deftest testing is]]
             [uk.axvr.dynamock :refer :all]))
-
 
 ;;; --------------------------------------------
 ;;; Dynamically-scoped function.
-
 
 (defn ^:dynamic *test-fn-arity-0* [] :a)
 
@@ -17,7 +15,6 @@
   (if x
     (apply x ys)
     ys))
-
 
 (deftest fns-work-dynamic
   (testing "*test-fn-arity-0*"
@@ -33,7 +30,6 @@
     (is (empty? (*test-fn-arity-rst* nil)))
     (is (= [nil] (*test-fn-arity-rst* nil nil)))))
 
-
 (deftest mock-*test-fn-arity-0*
   (testing "Rebound, no stubs"
     (with-mock *test-fn-arity-0* (fn [_ _] (fn [] :b))
@@ -41,7 +37,6 @@
   (testing "Rebound, fallback to old"
     (with-mock *test-fn-arity-0* (fn [old _] old)
       (is (= :a (*test-fn-arity-0*))))))
-
 
 (deftest mock-*test-fn-arity-1*
   (testing "Rebound, no stubs"
@@ -51,13 +46,13 @@
       (is (= :d (*test-fn-arity-1* :c)))))
   (testing "Rebound, with stub"
     (with-mock *test-fn-arity-1* (fn [_ stb] (fn [x] (some #(% x) (stb))))
-      (with-stub *test-fn-arity-1* (fn [x] (if (= x :a) :x))
+      (with-stub *test-fn-arity-1* (fn [x] (when (= x :a) :x))
         (is (= :x (*test-fn-arity-1* :a)))
         (is (= nil (*test-fn-arity-1* :y))))))
   (testing "Rebound, with 2 stubs"
     (with-mock *test-fn-arity-1* (fn [_ stb] (fn [x] (some #(% x) (stb))))
       (with-stubs *test-fn-arity-1* [identity
-                                     (fn [x] (if (= x :a) :x))]
+                                     (fn [x] (when (= x :a) :x))]
         (is (= :x (*test-fn-arity-1* :a)))
         (is (= :y (*test-fn-arity-1* :y))))))
   (testing "Rebound, with stubs"
@@ -81,7 +76,6 @@
       (is (= :bye (*test-fn-arity-1* :bye)))
       (is (= "hello" (*test-fn-arity-1* :hi))))))
 
-
 (deftest mock-*test-fn-arity-rst*
   (testing "Rebound, no stubs"
     (with-mock *test-fn-arity-rst* (fn [_ _]
@@ -94,24 +88,24 @@
     (with-mock *test-fn-arity-rst* (fn [old stb]
                                      (fn [x & rst]
                                        (apply (or (some #(% x) (stb)) old) x rst)))
-      (with-stub *test-fn-arity-rst* (fn [& rst] (fn [& r] r))
+      (with-stub *test-fn-arity-rst* (fn [& _] (fn [& r] r))
         (is (= [:a] (*test-fn-arity-rst* :a)))
         (is (= [:y :a] (*test-fn-arity-rst* :y :a))))))
   (testing "Rebound, with 2 stubs"
     (with-mock *test-fn-arity-rst* (fn [old stb]
                                      (fn [x & rst]
                                        (apply (or (some #(% x) (stb)) old) x rst)))
-      (with-stubs *test-fn-arity-rst* [(fn [& rst] (fn [& r] r))
-                                       (fn [x & rst] (if (= x :a) (fn [y & rs] y)))]
+      (with-stubs *test-fn-arity-rst* [(fn [& _] (fn [& r] r))
+                                       (fn [x & _] (when (= x :a) (fn [y & _] y)))]
         (is (= :a (*test-fn-arity-rst* :a)))
         (is (= [:y 1 2 3] (*test-fn-arity-rst* :y 1 2 3))))))
   (testing "Rebound, with stubs"
     (with-mock *test-fn-arity-rst* (fn [old stb]
                                      (fn [x & rst]
                                        (apply (or (some #(% x) (stb)) old) x rst)))
-      (stub! *test-fn-arity-rst* (fn [& rst] (fn [& r] r)))
-      (with-stub *test-fn-arity-rst* (fn [x & rst] (when (= x :bye) (constantly "leave")))
-        (stub! *test-fn-arity-rst* (fn [x & rst] (when (= x :hi) (constantly "hello"))))
+      (stub! *test-fn-arity-rst* (fn [& _] (fn [& r] r)))
+      (with-stub *test-fn-arity-rst* (fn [x & _] (when (= x :bye) (constantly "leave")))
+        (stub! *test-fn-arity-rst* (fn [x & _] (when (= x :hi) (constantly "hello"))))
         (is (= [:a] (*test-fn-arity-rst* :a)))
         (is (= [:b] (*test-fn-arity-rst* :b)))
         (is (= "hello" (*test-fn-arity-rst* :hi)))
@@ -120,9 +114,9 @@
     (with-mock *test-fn-arity-rst* (fn [old stb]
                                      (fn [x & rst]
                                        (apply (or (some #(% x) (stb)) old) x rst)))
-      (stub! *test-fn-arity-rst* (fn [& rst] (fn [& r] r)))
-      (stub! *test-fn-arity-rst* (fn [x & rst] (when (= x :hi) (constantly "hello"))))
-      (with-stub *test-fn-arity-rst* (fn [x & rst] (when (= x :bye) (constantly "leave")))
+      (stub! *test-fn-arity-rst* (fn [& _] (fn [& r] r)))
+      (stub! *test-fn-arity-rst* (fn [x & _] (when (= x :hi) (constantly "hello"))))
+      (with-stub *test-fn-arity-rst* (fn [x & _] (when (= x :bye) (constantly "leave")))
         (is (= [:a] (*test-fn-arity-rst* :a)))
         (is (= [:b] (*test-fn-arity-rst* :b)))
         (is (= "hello" (*test-fn-arity-rst* :hi)))
@@ -130,10 +124,8 @@
       (is (= [:bye] (*test-fn-arity-rst* :bye)))
       (is (= "hello" (*test-fn-arity-rst* :hi))))))
 
-
 ;;; --------------------------------------------
 ;;; Regular function.
-
 
 (defn test-fn-arity-0 [] :a)
 
@@ -144,7 +136,6 @@
   (if x
     (apply x ys)
     ys))
-
 
 (deftest fns-work
   (testing "test-fn-arity-0"
@@ -160,7 +151,6 @@
     (is (empty? (test-fn-arity-rst nil)))
     (is (= [nil] (test-fn-arity-rst nil nil)))))
 
-
 (deftest mock-test-fn-arity-0
   (testing "Rebound, no stubs"
     (with-mock test-fn-arity-0 (fn [_ _] (fn [] :b))
@@ -168,7 +158,6 @@
   (testing "Rebound, fallback to old"
     (with-mock test-fn-arity-0 (fn [old _] old)
       (is (= :a (test-fn-arity-0))))))
-
 
 (deftest mock-test-fn-arity-1
   (testing "Rebound, no stubs"
@@ -178,13 +167,13 @@
       (is (= :d (test-fn-arity-1 :c)))))
   (testing "Rebound, with stub"
     (with-mock test-fn-arity-1 (fn [_ stb] (fn [x] (some #(% x) (stb))))
-      (with-stub test-fn-arity-1 (fn [x] (if (= x :a) :x))
+      (with-stub test-fn-arity-1 (fn [x] (when (= x :a) :x))
         (is (= :x (test-fn-arity-1 :a)))
         (is (= nil (test-fn-arity-1 :y))))))
   (testing "Rebound, with 2 stubs"
     (with-mock test-fn-arity-1 (fn [_ stb] (fn [x] (some #(% x) (stb))))
       (with-stubs test-fn-arity-1 [identity
-                                   (fn [x] (if (= x :a) :x))]
+                                   (fn [x] (when (= x :a) :x))]
         (is (= :x (test-fn-arity-1 :a)))
         (is (= :y (test-fn-arity-1 :y))))))
   (testing "Rebound, with stubs"
@@ -208,7 +197,6 @@
       (is (= :bye (test-fn-arity-1 :bye)))
       (is (= "hello" (test-fn-arity-1 :hi))))))
 
-
 (deftest mock-test-fn-arity-rst
   (testing "Rebound, no stubs"
     (with-mock test-fn-arity-rst (fn [_ _]
@@ -221,24 +209,24 @@
     (with-mock test-fn-arity-rst (fn [old stb]
                                    (fn [x & rst]
                                      (apply (or (some #(% x) (stb)) old) x rst)))
-      (with-stub test-fn-arity-rst (fn [& rst] (fn [& r] r))
+      (with-stub test-fn-arity-rst (fn [& _] (fn [& r] r))
         (is (= [:a] (test-fn-arity-rst :a)))
         (is (= [:y :a] (test-fn-arity-rst :y :a))))))
   (testing "Rebound, with 2 stubs"
     (with-mock test-fn-arity-rst (fn [old stb]
                                    (fn [x & rst]
                                      (apply (or (some #(% x) (stb)) old) x rst)))
-      (with-stubs test-fn-arity-rst [(fn [& rst] (fn [& r] r))
-                                     (fn [x & rst] (if (= x :a) (fn [y & rs] y)))]
+      (with-stubs test-fn-arity-rst [(fn [& _] (fn [& r] r))
+                                     (fn [x & _] (when (= x :a) (fn [y & _] y)))]
         (is (= :a (test-fn-arity-rst :a)))
         (is (= [:y 1 2 3] (test-fn-arity-rst :y 1 2 3))))))
   (testing "Rebound, with stubs"
     (with-mock test-fn-arity-rst (fn [old stb]
                                    (fn [x & rst]
                                      (apply (or (some #(% x) (stb)) old) x rst)))
-      (stub! test-fn-arity-rst (fn [& rst] (fn [& r] r)))
-      (with-stub test-fn-arity-rst (fn [x & rst] (when (= x :bye) (constantly "leave")))
-        (stub! test-fn-arity-rst (fn [x & rst] (when (= x :hi) (constantly "hello"))))
+      (stub! test-fn-arity-rst (fn [& _] (fn [& r] r)))
+      (with-stub test-fn-arity-rst (fn [x & _] (when (= x :bye) (constantly "leave")))
+        (stub! test-fn-arity-rst (fn [x & _] (when (= x :hi) (constantly "hello"))))
         (is (= [:a] (test-fn-arity-rst :a)))
         (is (= [:b] (test-fn-arity-rst :b)))
         (is (= "hello" (test-fn-arity-rst :hi)))
@@ -247,9 +235,9 @@
     (with-mock test-fn-arity-rst (fn [old stb]
                                    (fn [x & rst]
                                      (apply (or (some #(% x) (stb)) old) x rst)))
-      (stub! test-fn-arity-rst (fn [& rst] (fn [& r] r)))
-      (stub! test-fn-arity-rst (fn [x & rst] (when (= x :hi) (constantly "hello"))))
-      (with-stub test-fn-arity-rst (fn [x & rst] (when (= x :bye) (constantly "leave")))
+      (stub! test-fn-arity-rst (fn [& _] (fn [& r] r)))
+      (stub! test-fn-arity-rst (fn [x & _] (when (= x :hi) (constantly "hello"))))
+      (with-stub test-fn-arity-rst (fn [x & _] (when (= x :bye) (constantly "leave")))
         (is (= [:a] (test-fn-arity-rst :a)))
         (is (= [:b] (test-fn-arity-rst :b)))
         (is (= "hello" (test-fn-arity-rst :hi)))

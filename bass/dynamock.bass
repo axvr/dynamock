@@ -20,7 +20,7 @@
         ($ clj-kondo & $args))))
 
   (defn lint [src]
-    (clj-kondo src "--lint" "src"))
+    (clj-kondo src "--lint" "src" "test"))
 
   (defn test [src]
     (clj src "-X:test"))

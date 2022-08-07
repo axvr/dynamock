@@ -1,7 +1,6 @@
 #!/usr/bin/env bass
 
-(use (*dir*/dynamock.bass)
-     (.git (linux/alpine/git)))
+(use (*dir*/dynamock.bass))
 
 (defn run-checks [src]
   (-> src (dynamock:checks) vals list->source (each succeeds?)))
