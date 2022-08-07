@@ -1,0 +1,34 @@
+(def *memos* *dir*/bass.lock)
+
+(provide
+  [clj clj-kondo lint test build-jar checks]
+
+  (defn with-clj-cache [thunk]
+    (-> thunk
+        (with-mount (cache-dir "java-m2-cache") /root/.m2/repository/)
+        (with-mount (cache-dir "clojure-git-cache") /root/.gitlibs/)))
+
+  (defn clj [src & args]
+    (-> ($ clojure & $args)
+        (with-dir src)
+        (with-clj-cache)
+        (with-image (linux/clojure :tools-deps))))
+
+  (defn clj-kondo [src & args]
+    (from (linux/cljkondo/clj-kondo)
+      (cd src
+        ($ clj-kondo & $args))))
+
+  (defn lint [src]
+    (clj-kondo src "--lint" "src"))
+
+  (defn test [src]
+    (clj src "-X:test"))
+
+  (defn build-jar [src]
+    (clj src "-T:build" "jar"))
+
+  (defn checks [src]
+    {:lint      (lint src)
+     :test      (test src)
+     :build-jar (build-jar src)}))

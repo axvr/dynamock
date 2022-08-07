@@ -1,1 +1,4 @@
 .cpcache
+.clj-kondo/.cache
+cljs-test-runner-out
+target

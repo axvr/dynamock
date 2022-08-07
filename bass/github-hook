@@ -1,0 +1,9 @@
+#!/usr/bin/env bass
+
+(use (*dir*/dynamock.bass)
+     (.git (linux/alpine/git))
+     (git:github/vito/bass-loop/ref/main/bass/github.bass))
+
+(defn main args
+  (for [event *stdin*]
+    (github:check-hook event git:checkout dynamock:checks)))
