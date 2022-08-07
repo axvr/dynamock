@@ -272,26 +272,16 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
 Add the following to your `deps.edn` file:
 
 ```clojure
-{:deps {uk.axvr/dynamock
-        {:git/tag "v0.3" :git/sha "de0fa67"
-         :git/url "https://github.com/axvr/dynamock.git"}}}
+{:deps {uk.axvr/dynamock {:mvn/version "0.4"}}}
 ```
 
 
 ### Leiningen
 
-To install Dynamock with Leiningen, you will need to use [lein-git-down][] as
-Dynamock is not distributed as a JAR.  This is an example `project.clj` file:
-
-[lein-git-down]: https://github.com/reifyhealth/lein-git-down
+To install Dynamock with Leiningen, add the following to your `project.clj` file:
 
 ```clojure
-(defproject my-project "0.1.0"
-  :plugins      [[reifyhealth/lein-git-down "0.4.1"]]
-  :middleware   [lein-git-down.plugin/inject-properties]
-  :repositories [["public-github" {:url "git://github.com"}]]
-  :git-down     {uk.axvr/dynamock {:coordinates axvr/dynamock}}
-  :dependencies [[uk.axvr/dynamock "de0fa67c469448e5ca474b756856bed39452349f"]])
+[uk.axvr/dynamock "0.4"]
 ```
 
 
