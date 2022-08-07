@@ -2,9 +2,13 @@
   "Tests for uk.axvr.dynamock.http."
   (:require [clojure.test :refer [deftest testing is]]
             [uk.axvr.dynamock :refer :all]
-            [uk.axvr.dynamock.http :refer :all]
+            [uk.axvr.dynamock.http :as dyn-http :refer [with-http-mock]]
             [clojure.string :as str])
   (:import [clojure.lang ExceptionInfo]))
+
+;; Make stub responses derefable.  Mimic usage with HttpKit.
+(swap! dyn-http/default-opts
+       assoc :transform-response #(dyn-http/->derefable %2))
 
 ;;; --------------------------------------------
 ;;; Dynamically-scoped function.
@@ -54,7 +58,7 @@
 (deftest test-block-real-http-requests-dynamic
   (testing "Blocked real HTTP requests."
     (with-http-mock *http-fn*
-      (stub! *http-fn* block-real-http-requests)
+      (stub! *http-fn* dyn-http/block-real-http-requests)
       (stub! *http-fn* [{:url "https://example.com/allowed"}
                         {:status 200}])
       (is (thrown-with-msg?
@@ -65,18 +69,11 @@
             @(*http-fn* {:url "https://example.com"})))
       (is (= {:status 200} @(*http-fn* {:url "https://example.com/allowed"}))))))
 
-(deftest derefable?-false-dynamic
+(deftest force-dereference-dynamic
   (testing "Response was not made derefable."
-    (with-http-mock *http-fn* {:derefable? false}
+    (with-http-mock *http-fn* {:transform-response (fn [_ resp] resp)}
       (let [resp {:status 200 :body "Hello!"}]
         (with-stub *http-fn* [{:url "https://example.com"} resp]
-          (is (= resp (*http-fn*
-                        {:url "https://example.com"
-                         :method :get})))))))
-  (testing "Response was automatically derefed."
-    (with-http-mock *http-fn* {:derefable? false}
-      (let [resp {:status 200 :body "Hello!"}]
-        (with-stub *http-fn* [{:url "https://example.com"} (future resp)]
           (is (= resp (*http-fn*
                         {:url "https://example.com"
                          :method :get}))))))))
@@ -129,7 +126,7 @@
 (deftest test-block-real-http-requests
   (testing "Blocked real HTTP requests."
     (with-http-mock http-fn
-      (stub! http-fn block-real-http-requests)
+      (stub! http-fn dyn-http/block-real-http-requests)
       (stub! http-fn [{:url "https://example.com/allowed"}
                       {:status 200}])
       (is (thrown-with-msg?
@@ -140,18 +137,11 @@
             @(http-fn {:url "https://example.com"})))
       (is (= {:status 200} @(http-fn {:url "https://example.com/allowed"}))))))
 
-(deftest derefable?-false
+(deftest force-dereference
   (testing "Response was not made derefable."
-    (with-http-mock *http-fn* {:derefable? false}
+    (with-http-mock *http-fn* {:transform-response (fn [_ resp] resp)}
       (let [resp {:status 200 :body "Hello!"}]
         (with-stub *http-fn* [{:url "https://example.com"} resp]
-          (is (= resp (*http-fn*
-                        {:url "https://example.com"
-                         :method :get})))))))
-  (testing "Response was automatically derefed."
-    (with-http-mock *http-fn* {:derefable? false}
-      (let [resp {:status 200 :body "Hello!"}]
-        (with-stub *http-fn* [{:url "https://example.com"} (future resp)]
           (is (= resp (*http-fn*
                         {:url "https://example.com"
                          :method :get}))))))))

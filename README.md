@@ -196,13 +196,13 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
 
 ```clojure
 (require '[uk.axvr.dynamock :refer [stub! with-stub with-stubs]]
-         '[uk.axvr.dynamock.http :refer [with-http-mock block-real-http-requests]]
+         '[uk.axvr.dynamock.http :as dyn-http :refer [with-http-mock]]
          '[org.httpkit.client :as http]
          '[clojure.string :as str])
 
-;; These examples will also work with clj-http, but you will need to remove all
-;; the `@`s (deref calls) and add `{:derefable? false}` as the second parameter
-;; on each `with-http-mock` call.
+;; Make responses derefable to behave like HttpKit.
+(swap! dyn-http/default-opts
+       assoc :transform-response #(dyn-http/->derefable %2))
 
 ;; HTTP requests work as expected.
 @(http/get "https://example.com")      ; => {:status 200, ...}
@@ -220,7 +220,7 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
 (with-http-mock http/request
   ;; Disallow real network requests.
   ;;   As this is fairly common, a stub is provided for this:
-  ;;     (stub! http/request block-real-http-requests)
+  ;;     (stub! http/request dyn-http/block-real-http-requests)
   (stub! http/request [(constantly true)
                        (fn [req]
                          (throw (ex-info "Real HTTP requests are not allowed!" req)))])

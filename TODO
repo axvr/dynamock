@@ -1,6 +1,5 @@
-- Release v1.0
 - Spying functionality.
   - uk.axvr.dynamock.spy namespace
   - spy mock and utilities.
-- Add [:transform :request] and [:transform :response] opts to http-mock.
-- Is :derefable? the best solution?  Just delay all stub responses?
+  - Steal ideas from: https://github.com/circleci/bond
+- Release v1.0
