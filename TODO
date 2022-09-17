@@ -2,4 +2,6 @@
   - uk.axvr.dynamock.spy namespace
   - spy mock and utilities.
   - Steal ideas from: https://github.com/circleci/bond
+- Closest matching HTTP stub.
+- Block HTTP requests except...
 - Release v1.0

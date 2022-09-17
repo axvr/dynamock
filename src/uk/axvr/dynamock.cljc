@@ -48,7 +48,7 @@
      ~@body))
 
 (defmacro with-stub
-  "Register stub for a mocked function (fn) that will be availiable in body.
+  "Register stub for a mocked function (fn) that will be available in body.
   Automatically places the stub in a new stub-scope."
   [fn stub & body]
   `(with-stubs ~fn [~stub]
