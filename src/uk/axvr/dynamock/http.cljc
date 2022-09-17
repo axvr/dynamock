@@ -24,6 +24,14 @@
   [x]
   (if (r/derefable? x) x (delay x)))
 
+(defn <-derefable
+  "When `x` is a \"derefable\" object, it will be dereferenced returned,
+  otherwise `x` will be returned."
+  ([x]
+   (if (r/derefable? x) @x x))
+  ([x timeout-ms timeout-val]
+   (if (r/derefable? x) (deref x timeout-ms timeout-val) x)))
+
 (defonce
   ^{:doc "Atom containing a map of the default options for the
   `uk.axvr.dynamock.http/http-mock` function.
