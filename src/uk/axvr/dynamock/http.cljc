@@ -9,7 +9,7 @@
   [params [pred stub]]
   (when
     (cond
-      (fn? pred)   (try (apply pred params) (catch Exception _))
+      (fn? pred)   (apply pred params)
       (map? pred)  (r/submap? pred (first params))
       (coll? pred) (= pred params))
     stub))
