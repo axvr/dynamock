@@ -99,4 +99,5 @@
 (def block-real-http-requests
   "Stub to block real HTTP requests."
   [(constantly true)
-   #(throw (ex-info "uk.axvr.dynamock: real HTTP requests are not allowed." %))])
+   #(throw
+      (ex-info "uk.axvr.dynamock: No matching stub found.  Real HTTP requests are blocked." %))])

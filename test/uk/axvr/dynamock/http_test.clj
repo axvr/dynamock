@@ -65,7 +65,7 @@
             ExceptionInfo
             (re-pattern
               (str/re-quote-replacement
-                "uk.axvr.dynamock: real HTTP requests are not allowed."))
+                "uk.axvr.dynamock: No matching stub found.  Real HTTP requests are blocked."))
             @(*http-fn* {:url "https://example.com"})))
       (is (= {:status 200} @(*http-fn* {:url "https://example.com/allowed"}))))))
 
@@ -133,7 +133,7 @@
             ExceptionInfo
             (re-pattern
               (str/re-quote-replacement
-                "uk.axvr.dynamock: real HTTP requests are not allowed."))
+                "uk.axvr.dynamock: No matching stub found.  Real HTTP requests are blocked."))
             @(http-fn {:url "https://example.com"})))
       (is (= {:status 200} @(http-fn {:url "https://example.com/allowed"}))))))
 
