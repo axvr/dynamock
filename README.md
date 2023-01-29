@@ -285,6 +285,13 @@ To install Dynamock with Leiningen, add the following to your `project.clj` file
 ```
 
 
+## Contributing
+
+```shell
+clojure -X:test
+```
+
+
 ## Legal
 
 No rights reserved.

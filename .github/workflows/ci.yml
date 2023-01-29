@@ -1,0 +1,33 @@
+name: CI
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Clj-kondo
+        uses: DeLaGuardo/setup-clojure@10.1
+        with:
+          clj-kondo: latest
+
+      - name: Run clj-kondo
+        run: clj-kondo --lint src test
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Clojure
+        uses: DeLaGuardo/setup-clojure@10.1
+        with:
+          cli: 1.11.1.1208
+
+      - name: Run tests
+        run: clojure -X:test
