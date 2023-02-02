@@ -1,6 +1,6 @@
 {:paths ["src"]
  :deps {org.clojure/clojure {:mvn/version "1.11.1"}
-        uk.axvr/refrain     {:mvn/version "0.1"}}
+        uk.axvr/refrain     {:mvn/version "0.2"}}
  :aliases
  {:test {:extra-paths ["test"]
          :extra-deps {io.github.cognitect-labs/test-runner
