@@ -65,9 +65,9 @@
 
     :transform-response
 
-      Function to make final modifications to the response before returning it.
-      It is passed the parameters given to the mocked function and the
-      response.  It is expected to return the response.
+      Function to make final modifications to the mocked response before
+      returning it.  It is passed the parameters given to the mocked function
+      and the response.  It is expected to return the response.
 
       Default:
 
@@ -85,11 +85,11 @@
    (let [{:keys [transform-request transform-response]} (merge @default-opts opts)]
      (fn [& params]
        (let [tformed-params (transform-request params)]
-         (transform-response
-           tformed-params
-           (if-let [stub (some (partial stub-pred-matches? tformed-params) (get-stubs))]
-             (stub->resp stub tformed-params)
-             (apply real-fn params))))))))
+         (if-let [stub (some (partial stub-pred-matches? tformed-params) (get-stubs))]
+           (transform-response
+             tformed-params
+             (stub->resp stub tformed-params))
+           (apply real-fn params)))))))
 
 (defmacro with-http-mock
   "Register the below scope with a mocked HTTP fn.
