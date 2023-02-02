@@ -1,7 +1,8 @@
+- Block HTTP requests except...
+- Optionally report on no matching stubs and show the result.
+  - This will be a stub-itself
 - Spying functionality.
   - uk.axvr.dynamock.spy namespace
   - spy mock and utilities.
   - Steal ideas from: https://github.com/circleci/bond
-- Closest matching HTTP stub.
-- Block HTTP requests except...
 - Release v1.0

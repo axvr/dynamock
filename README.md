@@ -262,27 +262,26 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
 
 ## Installation
 
+[![Clojars](https://img.shields.io/clojars/v/uk.axvr/dynamock.svg)](https://clojars.org/uk.axvr/dynamock)
+
 > **Warning**
 > Dynamock is still a work-in-progress.  Until it reaches v1.0, expect
 > backwards incompatible changes.
 
-
-### tools.deps
-
-Add the following to your `deps.edn` file:
+[tools.deps][]: add the following to your `deps.edn` file:
 
 ```clojure
-{:deps {uk.axvr/dynamock {:mvn/version "0.4"}}}
+uk.axvr/dynamock {:mvn/version "0.5"}
 ```
 
-
-### Leiningen
-
-To install Dynamock with Leiningen, add the following to your `project.clj` file:
+[Leiningen][]: to install Dynamock with Leiningen, add the following to your `project.clj` file:
 
 ```clojure
-[uk.axvr/dynamock "0.4"]
+[uk.axvr/dynamock "0.5"]
 ```
+
+[tools.deps]: https://clojure.org/reference/deps_and_cli
+[Leiningen]: https://leiningen.org
 
 
 ## Contributing
