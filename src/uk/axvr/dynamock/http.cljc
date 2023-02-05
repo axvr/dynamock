@@ -40,7 +40,8 @@
   available."}
   default-opts
   (atom {:transform-request  identity
-         :transform-response (fn [_ resp] resp)}))
+         :transform-response (fn [_ resp] resp)}
+        :validator map?))
 
 (defn http-mock
   "Simple HTTP mock function generator.

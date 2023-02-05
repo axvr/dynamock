@@ -3,12 +3,12 @@
 
 (def ^:dynamic *stubs*
   "Dynamock stub registry.  (Avoid accessing and manipulating this directly.)"
-  (atom {}))
+  (atom {} :validator map?))
 
 (defmacro with-stub-scope
   "Scope stubs registered in the body with `stub!` to a new dynamic scope."
   [& body]
-  `(binding [*stubs* (atom @*stubs*)]
+  `(binding [*stubs* (atom @*stubs* :validator map?)]
      ~@body))
 
 (defmacro stub!
