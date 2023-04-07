@@ -1,3 +1,5 @@
+- Mention `*direct-linking*` in README and doc-strings.
+- Switch for pure tools.build.
 - Block HTTP requests except...
 - Optionally report on no matching stubs and show the result.
   - This will be a stub-itself
