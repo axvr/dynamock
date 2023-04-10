@@ -10,7 +10,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Clj-kondo
-        uses: DeLaGuardo/setup-clojure@10.1
+        uses: DeLaGuardo/setup-clojure@10.2
         with:
           clj-kondo: latest
 
@@ -25,9 +25,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Install Clojure
-        uses: DeLaGuardo/setup-clojure@10.1
+        uses: DeLaGuardo/setup-clojure@10.2
         with:
-          cli: 1.11.1.1208
+          cli: 1.11.1.1273
 
       - name: Run tests
         run: clojure -X:test
