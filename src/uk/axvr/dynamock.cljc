@@ -44,7 +44,7 @@
   together in a vector."
   [f stubs & body]
   `(with-stub-scope
-     ~@(map (fn [s] `(stub! ~f ~s)) stubs)
+     (run! (fn [s#] (stub! ~f s#)) ~stubs)
      ~@body))
 
 (defmacro with-stub
