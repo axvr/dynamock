@@ -271,13 +271,13 @@ utilities are under the `uk.axvr.dynamock.http` namespace.
 [tools.deps][]: add the following to your `deps.edn` file:
 
 ```clojure
-uk.axvr/dynamock {:mvn/version "0.5"}
+uk.axvr/dynamock {:mvn/version "0.6"}
 ```
 
 [Leiningen][]: to install Dynamock with Leiningen, add the following to your `project.clj` file:
 
 ```clojure
-[uk.axvr/dynamock "0.5"]
+[uk.axvr/dynamock "0.6"]
 ```
 
 [tools.deps]: https://clojure.org/reference/deps_and_cli
