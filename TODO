@@ -1,5 +1,7 @@
 - Mention `*direct-linking*` and `^:redef` in README and doc-strings.
+- Remove dependence on Refrain?
 - Block HTTP requests except...
+- Wrappers for common HTTP clients.
 - Optionally report on no matching stubs and show the result.
   - This will be a stub-itself
 - Spying functionality.
