@@ -1,6 +1,7 @@
 # Building/deploying JARs
 
-Create a Git tag for the version to build (make sure the tag is prefixed with `v`).
+Create a Git tag for the version to build (make sure the tag is prefixed with
+`v`) and make sure you have no uncommitted local changes.
 
 Build the jar with this command.
 
