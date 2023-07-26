@@ -1,16 +1,33 @@
 # Building/deploying JARs
 
-Create a Git tag for the version to build (make sure the tag is prefixed with
-`v`) and make sure you have no uncommitted local changes.
+## Test
 
-Build the jar with this command.
+Run tests by executing the following command.
 
+```shell
+clj -X:test
 ```
+
+## Build
+
+> **Warning**<br>
+> If you have any local changes that haven't been committed, they will be included in the built jar file.
+
+Build and install the jar with these commands.
+
+```shell
 clojure -T:build jar
+clojure -T:build install
 ```
 
-Deploy with this command (replacing the username and password with your own).
+If there was no Git tag pointing to the commit, the jar will have the version: `local`.
 
-```sh
-CLOJARS_USERNAME=username CLOJARS_PASSWORD=CLOJARS_pat clojure -T:build deploy
+## Deploy
+
+Create a Git tag for the version to build (preferrably prefixed with `v`) pointing at the relevant commit.
+
+Run this command (replacing the username and password with your own and the version with the Git tag), which will test, build and deploy the jar to Clojars.
+
+```shell
+CLOJARS_USERNAME=username CLOJARS_PASSWORD=CLOJARS_pat ./build/deploy.sh vX.X
 ```

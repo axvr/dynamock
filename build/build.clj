@@ -5,7 +5,11 @@
 (def lib 'uk.axvr/dynamock)
 
 (def version
-  (subs (b/git-process {:git-args ["describe" "--tags" "--abbrev=0"]}) 1))
+  (if-let [tag (b/git-process {:git-args ["tag" "--points-at" "HEAD"]})]
+    (if (= \v (first tag))
+      (subs tag 1)
+      tag)
+    "local"))
 
 (def basis (b/create-basis {:project "deps.edn"}))
 (def class-dir "target/classes")
